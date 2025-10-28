@@ -11,7 +11,11 @@ local query_string = [[
     )
 ]]
 
-M.get_struct_nodes = function(bufnr)
+function M.struct_in_range(row, sRow, eRow)
+	return (row >= sRow) and (row <= eRow)
+end
+
+function M.get_struct_nodes(bufnr)
 	local ns = {}
 	local bufn = bufnr or api.nvim_get_current_buf()
 	local query = ts.query.parse("go", query_string)
@@ -34,6 +38,24 @@ M.get_struct_nodes = function(bufnr)
 	end
 
 	return ns
+end
+
+-- TODO: Handle nested structs
+function M.get_struct_at_cursor(bufnr)
+	local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
+	local bufn = bufnr or api.nvim_get_current_buf()
+
+	local structs = M.get_struct_nodes(bufn)
+
+	for _, struct in ipairs(structs) do
+		local sRow, _, eRow = struct.node:range()
+
+		-- row from cursor is 1-based indexed
+		if M.struct_in_range(row - 1, sRow, eRow) then
+			return struct
+		end
+	end
+	return nil
 end
 
 return M
