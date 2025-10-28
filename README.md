@@ -1,16 +1,20 @@
-# lighter-go.nvim
+# blend.nvim
 
-A lightweight subset of [go.nvim](https://github.com/ray-x/go.nvim), built for learning how to write Neovim plugins and collecting only the Go development features I actually need.
+A personal blend of essential Neovim functionality, built for learning how to write plugins and streamlining my own workflow.
 
-# Purpose
-lighter-go.nvim is a small learning project to understand how Neovim plugins work, especially how go.nvim integrates with the Go toolchain. Rather than cloning all of its functionality, this plugin focuses on the essentials and serves as a playground for experimentation.
+---
+## Purpose
 
-# Installation
+**blend.nvim** serves as a personal learning lab and utility bundle. Rather than focusing on a single language or plugin, it collects small, useful pieces of functionality into one place. The goal is to keep my setup clean, unified, and serve as a practical sandbox for exploring Neovim plugin development.
 
-**Lazy.vim**
+---
 
-```
+## Installation
+
+**Lazy.nvim**
+
+```lua
 {
-  "yourusername/lighter-go.nvim",
+  "asirago/blend.nvim",
 }
 ```
