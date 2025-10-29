@@ -13,6 +13,13 @@ local query_string = [[
     (field_declaration
         name:(field_identifier) @field.struct.name (struct_type)
     ) @field.struct.declaration
+
+    (
+         (composite_literal
+           type: (struct_type) @anon.struct.declaration 
+         )
+    )
+
 ]]
 
 function M.struct_in_range(row, sRow, eRow)
@@ -34,6 +41,10 @@ function M.get_struct_nodes(bufnr)
 				n.name = ts.get_node_text(node, 0)
 			elseif capture_id == "struct.declaration" or capture_id == "field.struct.declaration" then
 				n.node = node
+			elseif capture_id == "anon.struct.declaration" then
+				n.node = node
+				n.name = nil
+				table.insert(ns, n)
 			end
 			if n.name and n.node then
 				table.insert(ns, n)
@@ -79,9 +90,11 @@ function M.gomodify(...)
 		return
 	end
 
-	local struct_name = struct.name
-
-	if struct_name then
+	if struct.name == nil then
+		local sLines, _, eLines = struct.node:range()
+		table.insert(setup, "-line")
+		table.insert(setup, sLines .. "," .. eLines)
+	else
 		table.insert(setup, "-struct")
 		table.insert(setup, struct.name)
 	end
