@@ -14,7 +14,6 @@ function M.is_go_file()
 	local ft = vim.api.nvim_get_option_value("ft", { buf = 0 })
 
 	if ft ~= "go" then
-		vim.notify("not a go file", vim.log.levels.ERROR, { title = "GoAddStructTag" })
 		return false
 	end
 
