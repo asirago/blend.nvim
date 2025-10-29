@@ -16,5 +16,8 @@ A personal blend of essential Neovim functionality, built for learning how to wr
 ```lua
 {
   "asirago/blend.nvim",
+    opts = {
+        disable_default = false
+    }
 }
 ```
