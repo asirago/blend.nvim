@@ -110,6 +110,8 @@ function M.add_tags(...)
 		table.insert(cmd, "json")
 	end
 
+	vim.list_extend(cmd, args)
+
 	M.gomodify(unpack(cmd))
 end
 
