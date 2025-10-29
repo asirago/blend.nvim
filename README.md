@@ -21,3 +21,12 @@ A personal blend of essential Neovim functionality, built for learning how to wr
     }
 }
 ```
+---
+
+## Functionality
+
+#### Go struct tagging
+supports named struct type declarations, nested anonymous/named struct fields, anonymous struct assigned to a variable
+
+https://github.com/user-attachments/assets/df285f28-7d38-492d-982d-f65c2ab9066c
+
