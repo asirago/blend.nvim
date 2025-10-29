@@ -9,6 +9,10 @@ local query_string = [[
             name:(type_identifier) @struct.name type: (struct_type)
         ) @struct.declaration
     )
+
+    (field_declaration
+        name:(field_identifier) @field.struct.name (struct_type)
+    ) @field.struct.declaration
 ]]
 
 function M.struct_in_range(row, sRow, eRow)
@@ -26,9 +30,9 @@ function M.get_struct_nodes(bufnr)
 		for id, node in pairs(match) do
 			node = node[1]
 			local capture_id = query.captures[id]
-			if capture_id == "struct.name" then
+			if capture_id == "struct.name" or capture_id == "field.struct.name" then
 				n.name = ts.get_node_text(node, 0)
-			elseif capture_id == "struct.declaration" then
+			elseif capture_id == "struct.declaration" or capture_id == "field.struct.declaration" then
 				n.node = node
 			end
 			if n.name and n.node then
@@ -36,26 +40,32 @@ function M.get_struct_nodes(bufnr)
 			end
 		end
 	end
-
 	return ns
 end
 
--- TODO: Handle nested structs
 function M.get_struct_at_cursor(bufnr)
 	local row, _ = unpack(vim.api.nvim_win_get_cursor(0))
 	local bufn = bufnr or api.nvim_get_current_buf()
 
 	local structs = M.get_struct_nodes(bufn)
+	local found
 
 	for _, struct in ipairs(structs) do
 		local sRow, _, eRow = struct.node:range()
 
-		-- row from cursor is 1-based indexed
 		if M.struct_in_range(row - 1, sRow, eRow) then
-			return struct
+			if not found then
+				found = struct
+			else
+				local fsRow, _, feRow = found.node:range()
+				if (feRow - fsRow) > (eRow - sRow) then
+					found = struct
+				end
+			end
 		end
 	end
-	return nil
+
+	return found
 end
 
 function M.gomodify(...)
@@ -65,6 +75,7 @@ function M.gomodify(...)
 	local struct = M.get_struct_at_cursor()
 
 	if not struct then
+		vim.notify("struct not found", vim.log.levels.DEBUG)
 		return
 	end
 
