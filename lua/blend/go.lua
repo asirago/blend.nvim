@@ -115,4 +115,17 @@ function M.add_tags(...)
 	M.gomodify(unpack(cmd))
 end
 
+function M.remove_tags(...)
+	local cmd = { "-remove-tags" }
+	local args = { ... }
+
+	if #args == 0 then
+		args = { "json" }
+	end
+
+	vim.list_extend(cmd, args)
+
+	M.gomodify(unpack(cmd))
+end
+
 return M
