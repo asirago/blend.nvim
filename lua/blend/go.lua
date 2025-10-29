@@ -58,4 +58,59 @@ function M.get_struct_at_cursor(bufnr)
 	return nil
 end
 
+function M.gomodify(...)
+	local fname = vim.fn.expand("%")
+	local setup = { "gomodifytags", "-file", fname, "-format", "json", "-w" }
+
+	local struct = M.get_struct_at_cursor()
+
+	if not struct then
+		return
+	end
+
+	local struct_name = struct.name
+
+	if struct_name then
+		table.insert(setup, "-struct")
+		table.insert(setup, struct.name)
+	end
+
+	-- args {"--add-tags", "json", }
+	local args = { ... }
+	for _, v in ipairs(args) do
+		table.insert(setup, v)
+	end
+
+	vim.fn.jobstart(setup, {
+		on_stdout = function(_, data, _)
+			if not data or #data < 2 then
+				return
+			end
+
+			local struct_tagged = vim.fn.json_decode(data)
+			if struct_tagged.errors ~= nil then
+				vim.notify("failed to set tags" .. vim.inspect(struct_tagged), vim.log.levels.ERROR)
+			end
+
+			api.nvim_buf_set_lines(0, struct_tagged["start"] - 1, struct_tagged["end"], false, struct_tagged.lines)
+			vim.cmd("write")
+			vim.notify("struct updated", vim.log.levels.INFO)
+		end,
+	})
+end
+
+function M.add_tags(...)
+	local cmd = { "-add-tags" }
+	local args = { ... }
+	if #args == 0 then
+		args = { "json" }
+	end
+
+	if select(1, ...) == "-transform" then
+		table.insert(cmd, "json")
+	end
+
+	M.gomodify(unpack(cmd))
+end
+
 return M
