@@ -16,6 +16,7 @@ local function create_quake_window(opts)
 		buf = opts.buf
 	else
 		buf = vim.api.nvim_create_buf(false, true)
+		vim.api.nvim_buf_set_name(buf, "Messages")
 	end
 
 	state.prev_win = vim.api.nvim_get_current_win()
@@ -31,7 +32,6 @@ local function create_quake_window(opts)
 	vim.wo.signcolumn = "no"
 	vim.wo.cursorline = false
 	vim.wo.foldcolumn = "0"
-	vim.cmd("setlocal laststatus=0")
 
 	vim.wo.scrolloff = 0
 
