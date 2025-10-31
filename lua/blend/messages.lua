@@ -32,6 +32,7 @@ local function create_quake_window(opts)
 	vim.wo.signcolumn = "no"
 	vim.wo.cursorline = false
 	vim.wo.foldcolumn = "0"
+	vim.cmd("setlocal laststatus=0")
 
 	vim.wo.scrolloff = 0
 
@@ -47,9 +48,18 @@ local function create_quake_window(opts)
 	for _, key in ipairs({ "q", "<CR>" }) do
 		vim.api.nvim_buf_set_keymap(buf, "n", key, "", {
 			nowait = true,
-			callback = M.toggle_terminal,
+			callback = function()
+				vim.api.nvim_win_close(win, true)
+			end,
 		})
 	end
+
+	vim.api.nvim_create_autocmd("WinClosed", {
+		buffer = buf,
+		callback = function()
+			vim.cmd("setlocal laststatus=2")
+		end,
+	})
 
 	vim.api.nvim_set_current_win(state.prev_win)
 
