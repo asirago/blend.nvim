@@ -45,6 +45,9 @@ local function create_quake_window(opts)
 
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, msg_formatted)
 
+	local line_count = vim.api.nvim_buf_line_count(buf)
+	vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+
 	for _, key in ipairs({ "q", "<CR>" }) do
 		vim.api.nvim_buf_set_keymap(buf, "n", key, "", {
 			nowait = true,
