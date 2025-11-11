@@ -20,6 +20,11 @@ local query_string = [[
          )
     )
 
+    (var_declaration
+        (var_spec
+            name:(identifier) @struct.name type: (struct_type)
+        ) @struct.declaration
+    )
 ]]
 
 function M.struct_in_range(row, sRow, eRow)
