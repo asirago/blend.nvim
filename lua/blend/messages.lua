@@ -52,6 +52,7 @@ local function create_quake_window(opts)
 		vim.api.nvim_buf_set_keymap(buf, "n", key, "", {
 			nowait = true,
 			callback = function()
+				vim.api.nvim_set_current_win(state.prev_win)
 				vim.api.nvim_win_close(win, true)
 			end,
 		})
